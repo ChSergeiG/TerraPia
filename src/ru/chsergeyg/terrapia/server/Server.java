@@ -20,7 +20,7 @@ public class Server {
 
             switch (input.toLowerCase()) {
                 case "start":
-            System.out.print("SERVER/PORT> ");
+                    System.out.print("SERVER/PORT> ");
                     try {
                         core.start(Integer.parseInt(brd.readLine()));
                     } catch (NumberFormatException | IOException e) {

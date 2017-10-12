@@ -29,7 +29,7 @@ public class Core implements ServerSocketThreadEventHandler, SocketThreadEventHa
     }
 
     public String status() {
-        return String.format("Server %s runned\n", serverSocketThread.isAlive() ? "" : "not").trim();
+        return String.format("Server %s is running\n", serverSocketThread.isAlive() ? "" : "not").trim();
     }
 
     public void putLog(String msg) {
@@ -95,7 +95,7 @@ public class Core implements ServerSocketThreadEventHandler, SocketThreadEventHa
         socketThread.sendMessage(stringBuilder.toString());
     }
 
-    private String buildHTMLPage(String msg) {
+    private synchronized String buildHTMLPage(String msg) {
         StringBuilder builder = new StringBuilder();
         String[] parts = msg.split("\n\r");
         builder.append(String.format("<html><head><title>%s</title></head><body>", serverName));
@@ -118,6 +118,6 @@ public class Core implements ServerSocketThreadEventHandler, SocketThreadEventHa
 
     @Override
     public synchronized void onSocketThreadStopped(SocketThread socketThread) {
-        putLog("Socket Thread stooped");
+        putLog("Socket Thread stopped");
     }
 }
