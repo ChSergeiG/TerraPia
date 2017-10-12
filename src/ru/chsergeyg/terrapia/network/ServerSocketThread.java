@@ -1,27 +1,45 @@
 package ru.chsergeyg.terrapia.network;
 
-import ru.chsergeyg.terrapia.server.MyGpio;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public class ServerSocketThread extends Thread {
 
-    private final int port;
+    ServerSocketThreadEventHandler eventHandler;
+    int port;
+    int timeout;
 
-    public ServerSocketThread(int port, String name) {
+    public ServerSocketThread(ServerSocketThreadEventHandler eventHandler, String name, int port, int timeout) {
         super(name);
+        this.eventHandler = eventHandler;
         this.port = port;
+        this.timeout = timeout;
         start();
     }
 
     @Override
     public void run() {
-        System.out.println("SSK started");
-        while (!isInterrupted()) {
-            try {
-                MyGpio.go();
-            } catch (InterruptedException e) {
-                break;
+        eventHandler.onServerSocketThreadStarted(this);
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            eventHandler.onServerSocketCreated(this, serverSocket);
+            serverSocket.setSoTimeout(timeout);
+            while (!isInterrupted()) {
+                Socket socket;
+                try {
+                    eventHandler.onWaitingForConnect(this, serverSocket);
+                    socket = serverSocket.accept();
+                } catch (SocketTimeoutException e) {
+                    eventHandler.onServerSocketTimeout(this, serverSocket);
+                    continue;
+                }
+                eventHandler.onSocketAccepted(this, serverSocket, socket);
             }
+        } catch (IOException e) {
+            eventHandler.onServerSocketException(this, e);
+        } finally {
+            eventHandler.onServerSocketThreadStopped(this);
         }
-        System.out.println("SSK stopped");
     }
 }
