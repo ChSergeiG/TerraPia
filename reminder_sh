@@ -1,0 +1,3 @@
+javac -d out -sourcepath src src/ru/chsergeyg/terrapia/server/Server.java
+
+cd out & java ru.chsergeyg.terrapia.server.Server
