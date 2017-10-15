@@ -2,3 +2,5 @@
 /.idea/*
 /src/META-INF/*
 /out/*
+/Arduino/.build/
+/Arduino/lib

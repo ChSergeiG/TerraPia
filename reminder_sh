@@ -1,3 +1,7 @@
-javac -d out -sourcepath src src/ru/chsergeyg/terrapia/server/Server.java
+# Arduino
+http://openenergymonitor.blogspot.ru/2013/12/developing-for-arduino-remotely-on.html
+cd Arduino && ino build && ino upload && cd ..
 
+# Java
+javac -d out -sourcepath src src/ru/chsergeyg/terrapia/server/Server.java
 cd out & java ru.chsergeyg.terrapia.server.Server
