@@ -1,6 +1,6 @@
 /*.iml
 /.idea/*
-/src/META-INF/*
+/*/*.iml
+/*/lib/
 /out/*
 /Arduino/.build/
-/Arduino/lib

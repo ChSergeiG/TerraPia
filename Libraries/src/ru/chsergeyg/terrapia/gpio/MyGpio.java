@@ -1,4 +1,4 @@
-package ru.chsergeyg.terrapia.server;
+package ru.chsergeyg.terrapia.gpio;
 
 import com.pi4j.io.gpio.*;
 
