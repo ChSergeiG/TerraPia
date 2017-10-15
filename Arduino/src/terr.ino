@@ -62,7 +62,7 @@ void loop() {
   }
   data = data + lux + " ";
   if (counter > UPDATE_DELAY) {
-    day = lux < 600;
+    day = lux < 850;
     /// set season
     // large heater
     if (day) {
