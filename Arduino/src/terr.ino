@@ -89,8 +89,8 @@ void loop() {
     digitalWrite(VCC_4, lmp?LOW:HIGH);
     counter = 0;
   }
-  char buff [100];
-  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d %d %d %d %d", counter, hourCounter, temperature, humidity, lux, hourLux, bgM, hum, smM, lmp);
+  char buff [96];
+  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d", counter, hourCounter, temperature, humidity, lux, hourLux, bgM, hum, smM, lmp);
   for (int j = 0; j < i; j++) {
     Serial.print(buff[j]);
   }
