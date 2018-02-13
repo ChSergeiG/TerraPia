@@ -5,7 +5,6 @@ import fi.iki.elonen.NanoHTTPD;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 public class HTTPDThread extends NanoHTTPD {
 
     private static final Logger LOGGER = Logger.getLogger(HTTPDThread.class.getName());
