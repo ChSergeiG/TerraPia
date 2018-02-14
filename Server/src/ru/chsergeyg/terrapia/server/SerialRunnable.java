@@ -4,28 +4,25 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 
-public class SerialThread extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(SerialThread.class.getName());
+public class SerialRunnable implements Runnable {
     private static String state;
-
-    private static SerialPort sPort;
 
     @Override
     public void run() {
-        initSerial();
-        while (!isInterrupted()) {
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                LOGGER.warning(e.toString());
-            }
+        //initSerial("/dev/ttyUSB0");
+        while (!Thread.currentThread().isInterrupted()) {
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                Init.getLogger(SerialRunnable.class.getName()).warning(e.toString());
+//            }
         }
     }
 
-    private void initSerial() {
-        sPort = com.fazecast.jSerialComm.SerialPort.getCommPort("/dev/ttyUSB0");
+    private void initSerial(String portID) {
+       SerialPort sPort = com.fazecast.jSerialComm.SerialPort.getCommPort(portID);
         sPort.openPort();
         sPort.addDataListener(new SerialPortDataListener() {
             public int getListeningEvents() {
@@ -41,7 +38,7 @@ public class SerialThread extends Thread {
     }
 
     static String getStateString() {
-        LOGGER.info(state);
+        Init.getLogger(SerialRunnable.class.getName()).info(state);
         return state;
     }
 }
