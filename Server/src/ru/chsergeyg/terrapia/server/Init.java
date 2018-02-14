@@ -1,6 +1,8 @@
 package ru.chsergeyg.terrapia.server;
 
-import com.fazecast.jSerialComm.SerialPort;
+import ru.chsergeyg.terrapia.server.runnable.HTTPDRunnable;
+import ru.chsergeyg.terrapia.server.runnable.PiRunnable;
+import ru.chsergeyg.terrapia.server.runnable.SerialRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,10 @@ public class Init {
         return LOGGER.get(name);
     }
 
+    public static Map<String, Logger> getLogger() {
+        return LOGGER;
+    }
+
     public static void init() {
         if (!initialized) {
             LOGGER = new HashMap<>();
@@ -22,8 +28,8 @@ public class Init {
                     HTTPDRunnable.class.getName(),
                     Logger.getLogger(HTTPDRunnable.class.getName()));
             LOGGER.put(
-                    SerialPort.class.getName(),
-                    Logger.getLogger(SerialPort.class.getName()));
+                    SerialRunnable.class.getName(),
+                    Logger.getLogger(SerialRunnable.class.getName()));
             LOGGER.put(
                     PiRunnable.class.getName(),
                     Logger.getLogger(PiRunnable.class.getName()));

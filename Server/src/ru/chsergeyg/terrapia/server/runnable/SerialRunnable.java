@@ -1,24 +1,16 @@
-package ru.chsergeyg.terrapia.server;
+package ru.chsergeyg.terrapia.server.runnable;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-
-import java.util.concurrent.TimeUnit;
+import ru.chsergeyg.terrapia.server.Init;
 
 public class SerialRunnable implements Runnable {
     private static String state;
 
     @Override
     public void run() {
-        //initSerial("/dev/ttyUSB0");
-        while (!Thread.currentThread().isInterrupted()) {
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                Init.getLogger(SerialRunnable.class.getName()).warning(e.toString());
-//            }
-        }
+        Init.getLogger(getClass().getName()).info("SerialRunnable started");
     }
 
     private void initSerial(String portID) {

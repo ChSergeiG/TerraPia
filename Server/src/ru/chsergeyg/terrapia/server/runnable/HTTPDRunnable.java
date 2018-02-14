@@ -1,8 +1,8 @@
-package ru.chsergeyg.terrapia.server;
+package ru.chsergeyg.terrapia.server.runnable;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import ru.chsergeyg.terrapia.server.Init;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,6 +19,7 @@ public class HTTPDRunnable implements Runnable {
 
     @Override
     public void run() {
+        Init.getLogger(getClass().getName()).info("HTTPDRunnable started");
         HttpServer httpServer = null;
         try {
             httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
@@ -38,7 +39,7 @@ public class HTTPDRunnable implements Runnable {
         try {
             hash = MessageDigest.getInstance("SHA-256").digest(value.getBytes());
         } catch (NoSuchAlgorithmException e) {
-            Init.getLogger(HTTPDRunnable.class.getName()).warning(e.toString());
+            Init.getLogger(getClass().getName()).warning(e.toString());
         }
         StringBuilder stringBuilder = new StringBuilder();
         for (byte b : hash) {

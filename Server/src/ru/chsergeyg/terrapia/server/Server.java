@@ -1,32 +1,35 @@
 package ru.chsergeyg.terrapia.server;
 
+import ru.chsergeyg.terrapia.server.runnable.HTTPDRunnable;
+import ru.chsergeyg.terrapia.server.runnable.PiRunnable;
+import ru.chsergeyg.terrapia.server.runnable.SerialRunnable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
 
     public static void main(String[] args) {
         Init.init();
-        Thread thSerial = new Thread(null, new SerialRunnable(), "Serial thread");
-        Thread thHTTPD = new Thread(null, new HTTPDRunnable(), "HTTPD thread");
-        Thread thPi = new Thread(null, new PiRunnable(), "Pi4j thread");
+        Collection<Thread> threads = new ArrayList<>();
+        threads.add(new Thread(null, new SerialRunnable(), "Serial thread"));
+        threads.add(new Thread(null, new HTTPDRunnable(), "HTTPD thread"));
+        threads.add(new Thread(null, new PiRunnable(), "Pi4j thread"));
+        threads.forEach((t) -> {
+            try {
+                t.join();
+            } catch (InterruptedException exc) {
+                Init.getLogger(Server.class.getName()).warning(exc.toString());
+            }
+        });
+        threads.forEach(Thread::start);
         try {
-            thSerial.join();
-            thHTTPD.join();
-            thPi.join();
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
             Init.getLogger(Server.class.getName()).warning(e.toString());
         }
-        thSerial.start();
-        thHTTPD.start();
-        thPi.start();
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            Init.getLogger(Server.class.getName()).warning(e.toString());
-        }
-        thHTTPD.interrupt();
-        thSerial.interrupt();
-        thPi.interrupt();
+        threads.forEach(Thread::interrupt);
     }
 }
 
