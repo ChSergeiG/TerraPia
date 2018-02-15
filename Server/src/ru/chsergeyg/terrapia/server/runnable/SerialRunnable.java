@@ -1,32 +1,49 @@
 package ru.chsergeyg.terrapia.server.runnable;
 
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
+import com.pi4j.io.serial.Baud;
+import com.pi4j.io.serial.DataBits;
+import com.pi4j.io.serial.FlowControl;
+import com.pi4j.io.serial.Parity;
+import com.pi4j.io.serial.Serial;
+import com.pi4j.io.serial.SerialConfig;
+import com.pi4j.io.serial.SerialFactory;
+import com.pi4j.io.serial.SerialPort;
+import com.pi4j.io.serial.StopBits;
+import com.pi4j.system.SystemInfo;
 import ru.chsergeyg.terrapia.server.Init;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class SerialRunnable implements Runnable {
     private static String state;
 
     @Override
     public void run() {
+        state = "";
         Init.getLogger(getClass().getName()).info("SerialRunnable started");
+        try {
+            initSerial();
+        } catch (Exception e) {
+            Init.getLogger(getClass().getName()).warning(e.toString());
+        }
+        Init.getLogger(getClass().getName()).info("SerialRunnable stopped");
     }
 
-    private void initSerial(String portID) {
-       SerialPort sPort = com.fazecast.jSerialComm.SerialPort.getCommPort(portID);
-        sPort.openPort();
-        sPort.addDataListener(new SerialPortDataListener() {
-            public int getListeningEvents() {
-                return SerialPort.LISTENING_EVENT_DATA_WRITTEN;
-            }
-
-            public void serialEvent(SerialPortEvent serialPortEvent) {
-                if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_WRITTEN) {
-                    state = new String(serialPortEvent.getReceivedData());
-                }
-            }
-        });
+    private void initSerial() throws Exception {
+        final Serial serial = SerialFactory.createInstance();
+        final SerialConfig config = new SerialConfig();
+        config.device(Serial.FIRST_USB_COM_PORT);
+        config.baud(Baud._9600);
+        config.dataBits(DataBits._8);
+        config.flowControl(FlowControl.NONE);
+        config.parity(Parity.NONE);
+        config.stopBits(StopBits._1);
+        serial.open(config);
+        BufferedReader brd = new BufferedReader(new InputStreamReader(serial.getInputStream()));
+        while (!Thread.currentThread().isInterrupted()) {
+            state = brd.readLine();
+        }
     }
 
     static String getStateString() {

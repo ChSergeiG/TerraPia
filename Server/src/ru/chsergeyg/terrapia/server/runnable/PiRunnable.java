@@ -7,5 +7,6 @@ public class PiRunnable implements Runnable {
     @Override
     public void run() {
         Init.getLogger(getClass().getName()).info("PiRunnable started");
+        Init.getLogger(getClass().getName()).info("PiRunnable stopped");
     }
 }

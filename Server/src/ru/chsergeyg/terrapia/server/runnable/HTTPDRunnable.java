@@ -29,9 +29,11 @@ public class HTTPDRunnable implements Runnable {
         try {
             httpServer.createContext("/", (e) -> handlePage(e, "www/index.html"));
             httpServer.createContext("/terr", (e) -> handlePage(e, "www/terr.html"));
+            httpServer.createContext("/favicon.ico", (e) -> handlePage(e, "www/favicon.ico"));
         } catch (NullPointerException e) {
             Init.getLogger(getClass().getName()).warning("NPE on context creation procedure");
         }
+        Init.getLogger(getClass().getName()).info("HTTPDRunnable stopped");
     }
 
     private String getHash(String value) {
@@ -50,6 +52,7 @@ public class HTTPDRunnable implements Runnable {
 
     private void handlePage(HttpExchange httpExchange, String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
+        Init.getLogger(getClass().getName()).info(path+";\tsize: " + bytes.length+" bytes;");
         httpExchange.sendResponseHeaders(200, bytes.length);
         OutputStream responseBody = httpExchange.getResponseBody();
         responseBody.write(bytes);
