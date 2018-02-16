@@ -1,16 +1,14 @@
 package ru.chsergeyg.terrapia.server.runnable;
 
-import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import ru.chsergeyg.terrapia.server.HandlerFactory;
 import ru.chsergeyg.terrapia.server.Init;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.stream.Stream;
 
 public class HTTPDRunnable implements Runnable {
 
@@ -20,20 +18,14 @@ public class HTTPDRunnable implements Runnable {
     @Override
     public void run() {
         Init.getLogger(getClass().getName()).info("HTTPDRunnable started");
-        HttpServer httpServer = null;
         try {
-            httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
+            HttpServer httpServer = HttpServer.create(new InetSocketAddress(Init.SERVER_PORT), 0);
+            myCreateContext(httpServer, "/", "/echoHeader", "/echoGet", "/echoPost", "/favicon.ico");
+            httpServer.setExecutor(null);
+            httpServer.start();
         } catch (IOException e) {
             Init.getLogger(getClass().getName()).warning(e.toString());
         }
-        try {
-            httpServer.createContext("/", (e) -> handlePage(e, "www/index.html"));
-            httpServer.createContext("/terr", (e) -> handlePage(e, "www/terr.html"));
-            httpServer.createContext("/favicon.ico", (e) -> handlePage(e, "www/favicon.ico"));
-        } catch (NullPointerException e) {
-            Init.getLogger(getClass().getName()).warning("NPE on context creation procedure");
-        }
-        Init.getLogger(getClass().getName()).info("HTTPDRunnable stopped");
     }
 
     private String getHash(String value) {
@@ -50,13 +42,8 @@ public class HTTPDRunnable implements Runnable {
         return stringBuilder.toString();
     }
 
-    private void handlePage(HttpExchange httpExchange, String path) throws IOException {
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
-        Init.getLogger(getClass().getName()).info(path+";\tsize: " + bytes.length+" bytes;");
-        httpExchange.sendResponseHeaders(200, bytes.length);
-        OutputStream responseBody = httpExchange.getResponseBody();
-        responseBody.write(bytes);
-        responseBody.close();
+    private void myCreateContext(HttpServer server, String... path) {
+        Stream.of(path).forEach((e) -> server.createContext(e, HandlerFactory.getHandler(e)));
     }
 
 }
