@@ -22,12 +22,11 @@ public class SerialRunnable implements Runnable {
     public void run() {
         state = "";
         Init.getLogger(getClass().getName()).info("SerialRunnable started");
-        try {
-            initSerial();
-        } catch (Exception e) {
-            Init.getLogger(getClass().getName()).warning(e.toString());
-        }
-        Init.getLogger(getClass().getName()).info("SerialRunnable stopped");
+//        try {
+//            initSerial();
+//        } catch (Exception e) {
+//            Init.getLogger(getClass().getName()).warning(e.toString());
+//        }
     }
 
     private void initSerial() throws Exception {
