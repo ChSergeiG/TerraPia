@@ -5,9 +5,8 @@ import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
-
     public static void main(String[] args) {
-        new Init();
+        Init init = new Init();
         BufferedReader brd = new BufferedReader(new InputStreamReader(System.in));
         try {
             while (!brd.readLine().equals("quit")) {
@@ -16,7 +15,7 @@ public class Server {
         } catch (Exception e) {
             Init.getLogger(Server.class.getName()).warning(e.toString());
         }
-        Init.threads.forEach(Thread::interrupt);
+        init.threads.forEach(Thread::interrupt);
     }
 }
 

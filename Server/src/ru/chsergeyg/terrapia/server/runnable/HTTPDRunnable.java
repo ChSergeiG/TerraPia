@@ -1,14 +1,13 @@
 package ru.chsergeyg.terrapia.server.runnable;
 
 import com.sun.net.httpserver.HttpServer;
-import ru.chsergeyg.terrapia.server.HandlerFactory;
+import ru.chsergeyg.terrapia.server.HandlerEnum;
 import ru.chsergeyg.terrapia.server.Init;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.stream.Stream;
+import java.util.List;
 
 public class HTTPDRunnable implements Runnable {
 
@@ -19,12 +18,12 @@ public class HTTPDRunnable implements Runnable {
     public void run() {
         Init.getLogger(getClass().getName()).info("HTTPDRunnable started");
         try {
-            HttpServer httpServer = HttpServer.create(new InetSocketAddress(Init.SERVER_PORT), 0);
-            myCreateContext(httpServer, "/", "/echoHeader", "/echoGet", "/echoPost", "/favicon.ico");
+            final HttpServer httpServer = HttpServer.create(new InetSocketAddress(Init.HTTPD_PORT), 0);
+            List.of(HandlerEnum.values()).forEach((e) -> httpServer.createContext(e.getUrl(), e.getHandler()));
             httpServer.setExecutor(null);
             httpServer.start();
-        } catch (IOException e) {
-            Init.getLogger(getClass().getName()).warning(e.toString());
+        } catch (Exception e) {
+            Init.getLogger(getClass().getName()).warning("NPE on context creation procedure");
         }
     }
 
@@ -40,10 +39,6 @@ public class HTTPDRunnable implements Runnable {
             stringBuilder.append(Integer.toHexString((b & 0xFF) | 0x100).substring(1, 3));
         }
         return stringBuilder.toString();
-    }
-
-    private void myCreateContext(HttpServer server, String... path) {
-        Stream.of(path).forEach((e) -> server.createContext(e, HandlerFactory.getHandler(e)));
     }
 
 }

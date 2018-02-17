@@ -9,29 +9,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Init {
 
-    public static final int SERVER_PORT = 8080;
     private static Map<String, Logger> LOGGER;
     private static boolean initialized = false;
 
-    static Collection<Thread> threads;
+    public Collection<Thread> threads;
+    public static final int HTTPD_PORT = 8080;
 
     Init() {
         init();
-        threads = new ArrayList<>();
-        threads.add(new Thread(null, new SerialRunnable(), "Serial thread"));
-        threads.add(new Thread(null, new HTTPDRunnable(), "HTTPD thread"));
-        threads.add(new Thread(null, new PiRunnable(), "Pi4j thread"));
-        threads.forEach((t) -> {
-            try {
-                t.join();
-            } catch (InterruptedException exc) {
-                Init.getLogger(Server.class.getName()).warning(exc.toString());
-            }
-        });
-        threads.forEach(Thread::start);
     }
 
     public static Logger getLogger(String name) {
@@ -42,25 +31,29 @@ public class Init {
         return LOGGER;
     }
 
-    private static void init() {
+    private void init() {
         if (!initialized) {
             LOGGER = new HashMap<>();
-            LOGGER.put(
-                    HTTPDRunnable.class.getName(),
-                    Logger.getLogger(HTTPDRunnable.class.getName()));
-            LOGGER.put(
-                    SerialRunnable.class.getName(),
-                    Logger.getLogger(SerialRunnable.class.getName()));
-            LOGGER.put(
-                    PiRunnable.class.getName(),
-                    Logger.getLogger(PiRunnable.class.getName()));
-            LOGGER.put(
-                    HandlerFactory.class.getName(),
-                    Logger.getLogger(HandlerFactory.class.getName()));
-            LOGGER.put(
-                    Server.class.getName(),
-                    Logger.getLogger(Server.class.getName()));
+            threads = new ArrayList<>();
+            logClasses(HTTPDRunnable.class, SerialRunnable.class, PiRunnable.class, Server.class, HandlerEnum.class);
+            initThreads(new SerialRunnable(), new HTTPDRunnable(), new PiRunnable());
+            threads.forEach((t) -> {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    Init.getLogger(Server.class.getName()).warning(e.toString());
+                }
+            });
+            threads.forEach(Thread::start);
         }
         initialized = true;
+    }
+
+    private void initThreads(Runnable... runnables) {
+        Stream.of(runnables).forEach((r) -> threads.add(new Thread(null, r, r.toString())));
+    }
+
+    private void logClasses(Class... classes) {
+        Stream.of(classes).forEach((c) -> LOGGER.put(c.getName(), Logger.getLogger(c.getName())));
     }
 }
