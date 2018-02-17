@@ -18,24 +18,22 @@ public class Init {
 
     public Collection<Thread> threads;
     public static final int HTTPD_PORT = 8080;
+    public static final String PAGEBUILDER_DELIMITER = "~@~";
 
     Init() {
         init();
     }
 
     public static Logger getLogger(String name) {
-        return LOGGER.get(name);
-    }
-
-    public static Map<String, Logger> getLogger() {
-        return LOGGER;
+        return LOGGER.get(LOGGER.containsKey(name) ? name : Thread.currentThread().getName());
     }
 
     private void init() {
         if (!initialized) {
             LOGGER = new HashMap<>();
             threads = new ArrayList<>();
-            logClasses(HTTPDRunnable.class, SerialRunnable.class, PiRunnable.class, Server.class, HandlerEnum.class);
+            logClasses(Init.class, HTTPDRunnable.class, SerialRunnable.class, PiRunnable.class, Server.class,
+                    HandlerEnum.class, HandlerStorage.class, StringBuilder.class);
             initThreads(new SerialRunnable(), new HTTPDRunnable(), new PiRunnable());
             threads.forEach((t) -> {
                 try {
