@@ -7,16 +7,19 @@ import ru.chsergeyg.terrapia.server.Init;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HTTPDRunnable implements Runnable {
 
-    private static final String LOGIN = "root";
-    private static final String PASS_HASH = "982f249c728f730cbe5ddd7b02a3c3e660fe8f860e5c501648e17ab2b0e77472";
+    private static Map<String, String> credentials;
 
     @Override
     public void run() {
         Init.getLogger(getClass().getName()).info("HTTPDRunnable started");
+        credentials = new HashMap<>();
+        credentials.put("root", "982f249c728f730cbe5ddd7b02a3c3e660fe8f860e5c501648e17ab2b0e77472");
         try {
             final HttpServer httpServer = HttpServer.create(new InetSocketAddress(Init.HTTPD_PORT), 0);
             List.of(HandlerEnum.values()).forEach((e) -> httpServer.createContext(e.getUrl(), e.getHandler()));
@@ -41,4 +44,9 @@ public class HTTPDRunnable implements Runnable {
         return stringBuilder.toString();
     }
 
+    public static boolean isUserValid(String login, String shaPasswd) {
+        if (credentials.size() > 0 && credentials.containsKey(login))
+            return credentials.get(login).equals(shaPasswd);
+        return false;
+    }
 }

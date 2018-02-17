@@ -3,4 +3,6 @@
 /*/*.iml
 /*/lib/
 /out/*
+/classes/*
+/target/*
 /Arduino/.build/
