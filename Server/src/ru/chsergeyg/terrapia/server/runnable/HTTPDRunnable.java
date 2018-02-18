@@ -19,7 +19,8 @@ public class HTTPDRunnable implements Runnable {
     public void run() {
         Init.getLogger(getClass().getName()).info("HTTPDRunnable started");
         credentials = new HashMap<>();
-        credentials.put("root", "982f249c728f730cbe5ddd7b02a3c3e660fe8f860e5c501648e17ab2b0e77472");
+        credentials.put("root", getHash("password"));
+        credentials.put("groot", getHash("groot im am"));
         try {
             final HttpServer httpServer = HttpServer.create(new InetSocketAddress(Init.HTTPD_PORT), 0);
             List.of(HandlerEnum.values()).forEach((e) -> httpServer.createContext(e.getUrl(), e.getHandler()));

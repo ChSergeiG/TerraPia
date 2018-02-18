@@ -22,8 +22,9 @@ class HandlerStorage {
     public static class RootHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            byte[] response = Files.readAllBytes(Paths.get(HandlerEnum.ROOT.getFilePath()));
-            processResponse(response, exchange, getClass());
+            processResponse(
+                    Files.readAllBytes(Paths.get(HandlerEnum.ROOT.getFilePath())),
+                    exchange, getClass());
         }
     }
 
@@ -34,14 +35,14 @@ class HandlerStorage {
             String query = exchange.getRequestURI().getRawQuery();
             parseQuery(query, parameters);
             final StringBuilder response = new StringBuilder();
+            parameters.forEach((k, v) -> response.append(k).append(" -> ").append(v).append("</code><br><code>"));
             if (HTTPDRunnable.isUserValid((String) parameters.get("user"), (String) parameters.get("password"))) {
-                parameters.forEach((k, v) -> response.append(k).append(" -> ").append(v).append("\n"));
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_root_button.html", response.toString()),
+                        PageBuilder.buildPage("www/template/single_with_custom_button.html", response.toString(), "/", "Back"),
                         exchange, getClass());
             } else
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_root_button.html", ""),
+                        PageBuilder.buildPage("www/template/single_with_custom_button.html", "Wrong login pair:</code><br><code>" + response.toString(), "/", "Back"),
                         exchange, getClass());
         }
     }
@@ -49,16 +50,27 @@ class HandlerStorage {
     public static class FaviconHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            byte[] response = Files.readAllBytes(Paths.get(HandlerEnum.FAVICON.getFilePath()));
-            processResponse(response, exchange, getClass());
+            processResponse(
+                    Files.readAllBytes(Paths.get(HandlerEnum.FAVICON.getFilePath())),
+                    exchange, getClass());
         }
     }
 
     public static class SHAHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            byte[] response = Files.readAllBytes(Paths.get(HandlerEnum.SHA256.getFilePath()));
-            processResponse(response, exchange, getClass());
+            processResponse(
+                    Files.readAllBytes(Paths.get(HandlerEnum.SHA256.getFilePath())),
+                    exchange, getClass());
+        }
+    }
+
+    public static class CssHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            processResponse(
+                    Files.readAllBytes(Paths.get(HandlerEnum.CSS.getFilePath())),
+                    exchange, getClass());
         }
     }
 
@@ -95,7 +107,7 @@ class HandlerStorage {
         os.close();
     }
 
-    public static void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {
+    private static void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {
         if (query != null) {
             String pairs[] = query.split("[&]");
             for (String pair : pairs) {
@@ -113,9 +125,8 @@ class HandlerStorage {
                     if (obj instanceof List<?>) {
                         List<String> values = (List<String>) obj;
                         values.add(value);
-
                     } else if (obj instanceof String) {
-                        List<String> values = new ArrayList<String>();
+                        List<String> values = new ArrayList<>();
                         values.add((String) obj);
                         values.add(value);
                         parameters.put(key, values);

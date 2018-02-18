@@ -7,6 +7,7 @@ public enum HandlerEnum {
     FAVICON("/favicon.ico", "www/favicon.ico", new HandlerStorage.FaviconHandler()),
     SHA256("/js/sha256.js", "www/js/sha256.js", new HandlerStorage.SHAHandler()),
     TERR("/terr", null, new HandlerStorage.TerrHandler()),
+    CSS("/css/style.css", "www/css/style.css", new HandlerStorage.CssHandler()),
     ECHO_POST("/echoPost", null, new HandlerStorage.EchoPostHandler());
 
     private String url;
