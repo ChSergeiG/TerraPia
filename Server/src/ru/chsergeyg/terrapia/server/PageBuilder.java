@@ -1,8 +1,5 @@
 package ru.chsergeyg.terrapia.server;
 
-import javafx.scene.shape.Path;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

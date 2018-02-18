@@ -7,9 +7,7 @@ import com.pi4j.io.serial.Parity;
 import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialConfig;
 import com.pi4j.io.serial.SerialFactory;
-import com.pi4j.io.serial.SerialPort;
 import com.pi4j.io.serial.StopBits;
-import com.pi4j.system.SystemInfo;
 import ru.chsergeyg.terrapia.server.Init;
 
 import java.io.BufferedReader;

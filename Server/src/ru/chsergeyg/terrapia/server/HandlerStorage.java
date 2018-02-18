@@ -13,6 +13,7 @@ import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,26 +78,20 @@ class HandlerStorage {
     public static class EchoPostHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            Map<String, Object> parameters = new HashMap<>();
-            String query = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), "utf-8")).readLine();
-            parseQuery(query, parameters);
-            StringBuilder response = new StringBuilder();
-            for (String key : parameters.keySet()) {
-                response.append(key);
-                response.append(" = ");
-                response.append(parameters.get(key));
-                response.append("\n");
-            }
-            processResponse(response, exchange, getClass());
+            StringBuilder sb = new StringBuilder();
+            sb.append("--------TYPE--------\n");
+            sb.append(exchange.getRequestMethod()).append("\n");
+            sb.append("--------HEAD--------\n");
+            exchange.getRequestHeaders().forEach(
+                    (key, value) -> sb.append(key).append(" -> ").append(Arrays.toString(value.toArray())).append("\n"));
+            sb.append("--------BODY--------\n");
+            new BufferedReader(new InputStreamReader(exchange.getRequestBody())).lines().forEach((line) -> sb.append(line).append("\n"));
+            processResponse(sb, exchange, getClass());
         }
     }
 
     private static void processResponse(StringBuilder response, HttpExchange exchange, Class handler) throws IOException {
         processResponse(response.toString().getBytes(), exchange, handler);
-    }
-
-    private static void processResponse(String response, HttpExchange exchange, Class handler) throws IOException {
-        processResponse(response.getBytes(), exchange, handler);
     }
 
     private static void processResponse(byte[] response, HttpExchange exchange, Class handler) throws IOException {
