@@ -3,6 +3,7 @@ package ru.chsergeyg.terrapia.server;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.chsergeyg.terrapia.server.runnable.HTTPDRunnable;
+import ru.chsergeyg.terrapia.server.runnable.SerialRunnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +25,7 @@ class HandlerStorage {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             processResponse(
-                    Files.readAllBytes(Paths.get(HandlerEnum.ROOT.getFilePath())),
+                    PageBuilder.buildPage("www/template/index.html"),
                     exchange, getClass());
         }
     }
@@ -33,17 +34,16 @@ class HandlerStorage {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             Map<String, Object> parameters = new HashMap<>();
-            String query = exchange.getRequestURI().getRawQuery();
-            parseQuery(query, parameters);
-            final StringBuilder response = new StringBuilder();
-            parameters.forEach((k, v) -> response.append(k).append(" -> ").append(v).append("</code><br><code>"));
-            if (HTTPDRunnable.isUserValid((String) parameters.get("user"), (String) parameters.get("password"))) {
+            parseQuery(new BufferedReader(new InputStreamReader(exchange.getRequestBody())).readLine(), parameters);
+            if (HTTPDRunnable.isUserValid((String) parameters.get("login"), (String) parameters.get("password"))) {
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_custom_button.html", response.toString(), "/", "Back"),
+                        PageBuilder.buildPage("www/template/single_with_custom_button.html",
+                                "Success", "/", SerialRunnable.getState(), "Back"),
                         exchange, getClass());
             } else
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_custom_button.html", "Wrong login pair:</code><br><code>" + response.toString(), "/", "Back"),
+                        PageBuilder.buildPage("www/template/single_with_custom_button.html",
+                                "Fail", "/", "Wrong login pair.", "Back"),
                         exchange, getClass());
         }
     }
@@ -72,21 +72,6 @@ class HandlerStorage {
             processResponse(
                     Files.readAllBytes(Paths.get(HandlerEnum.CSS.getFilePath())),
                     exchange, getClass());
-        }
-    }
-
-    public static class EchoPostHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            StringBuilder sb = new StringBuilder();
-            sb.append("--------TYPE--------\n");
-            sb.append(exchange.getRequestMethod()).append("\n");
-            sb.append("--------HEAD--------\n");
-            exchange.getRequestHeaders().forEach(
-                    (key, value) -> sb.append(key).append(" -> ").append(Arrays.toString(value.toArray())).append("\n"));
-            sb.append("--------BODY--------\n");
-            new BufferedReader(new InputStreamReader(exchange.getRequestBody())).lines().forEach((line) -> sb.append(line).append("\n"));
-            processResponse(sb, exchange, getClass());
         }
     }
 

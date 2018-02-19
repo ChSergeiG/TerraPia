@@ -43,7 +43,7 @@ public class SerialRunnable implements Runnable {
         }
     }
 
-    static String getStateString() {
+  public   static String getState() {
         Init.getLogger(SerialRunnable.class.getName()).info(state);
         return state;
     }
