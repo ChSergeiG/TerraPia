@@ -2,25 +2,27 @@ package ru.chsergeyg.terrapia.server;
 
 import com.sun.net.httpserver.HttpHandler;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public enum HandlerEnum {
-    ROOT("/", "www/index.html", new HandlerStorage.RootHandler()),
-    FAVICON("/favicon.ico", "www/favicon.ico", new HandlerStorage.FaviconHandler()),
-    SHA256("/js/sha256.js", "www/js/sha256.js", new HandlerStorage.SHAHandler()),
-    TERR("/terr", null, new HandlerStorage.TerrHandler()),
-    CSS("/css/style.css", "www/css/style.css", new HandlerStorage.CssHandler());
+    ROOT("/", new HandlerStorage.RootHandler(), "www", "index.html"),
+    FAVICON("/favicon.ico", new HandlerStorage.FaviconHandler(), "www", "favicon.ico"),
+    TERR("/terr", new HandlerStorage.TerrHandler(), ""),
+    CSS("/css/style.css", new HandlerStorage.CssHandler(), "www", "css", "style.css");
 
     private String url;
 
-    public String getFilePath() {
+    public Path getFilePath() {
         return filePath;
     }
 
-    private String filePath;
+    private Path filePath;
     private HttpHandler handler;
 
-    HandlerEnum(String url, String filePath, HttpHandler handler) {
+    HandlerEnum(String url, HttpHandler handler, String... filePath) {
         this.url = url;
-        this.filePath = filePath;
+        this.filePath = Paths.get(Init.WORKING_PATH.toString(), filePath);
         this.handler = handler;
     }
 

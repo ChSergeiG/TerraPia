@@ -2,14 +2,14 @@ package ru.chsergeyg.terrapia.server;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class PageBuilder {
 
-    public static StringBuilder buildPage(String templatePath, String... fillers) {
+    public static StringBuilder buildPage(Path templatePath, String... fillers) {
         StringBuilder page = new StringBuilder();
         try {
-            Files.readAllLines(Paths.get(templatePath)).forEach(page::append);
+            Files.readAllLines(templatePath).forEach(page::append);
             String[] parts = page.toString().split(Init.PAGEBUILDER_DELIMITER);
             int partCount = parts.length;
             int fillerCount = fillers.length;

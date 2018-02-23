@@ -24,7 +24,7 @@ class HandlerStorage {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             processResponse(
-                    PageBuilder.buildPage("www/template/index.html"),
+                    PageBuilder.buildPage(Paths.get(Init.WORKING_PATH.toString(), "www", "template", "index.html")),
                     exchange, getClass());
         }
     }
@@ -36,12 +36,12 @@ class HandlerStorage {
             parseQuery(new BufferedReader(new InputStreamReader(exchange.getRequestBody())).readLine(), parameters);
             if (HTTPDRunnable.isUserValid((String) parameters.get("login"), (String) parameters.get("password"))) {
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_custom_button.html",
+                        PageBuilder.buildPage(Paths.get(Init.WORKING_PATH.toString(), "www", "template", "single_with_custom_button.html"),
                                 "Success", "/", SerialRunnable.getState(), "Back"),
                         exchange, getClass());
             } else
                 processResponse(
-                        PageBuilder.buildPage("www/template/single_with_custom_button.html",
+                        PageBuilder.buildPage(Paths.get(Init.WORKING_PATH.toString(), "www", "template", "single_with_custom_button.html"),
                                 "Fail", "/", "Wrong login pair.", "Back"),
                         exchange, getClass());
         }
@@ -51,16 +51,7 @@ class HandlerStorage {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             processResponse(
-                    Files.readAllBytes(Paths.get(HandlerEnum.FAVICON.getFilePath())),
-                    exchange, getClass());
-        }
-    }
-
-    public static class SHAHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            processResponse(
-                    Files.readAllBytes(Paths.get(HandlerEnum.SHA256.getFilePath())),
+                    Files.readAllBytes(HandlerEnum.FAVICON.getFilePath()),
                     exchange, getClass());
         }
     }
@@ -69,7 +60,7 @@ class HandlerStorage {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             processResponse(
-                    Files.readAllBytes(Paths.get(HandlerEnum.CSS.getFilePath())),
+                    Files.readAllBytes(HandlerEnum.CSS.getFilePath()),
                     exchange, getClass());
         }
     }
