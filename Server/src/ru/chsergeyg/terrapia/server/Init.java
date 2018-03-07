@@ -1,6 +1,5 @@
 package ru.chsergeyg.terrapia.server;
 
-import javafx.concurrent.Worker;
 import ru.chsergeyg.terrapia.server.runnable.HTTPDRunnable;
 import ru.chsergeyg.terrapia.server.runnable.PiRunnable;
 import ru.chsergeyg.terrapia.server.runnable.SerialRunnable;
@@ -16,25 +15,17 @@ import java.util.stream.Stream;
 
 public class Init {
 
-    private static Map<String, Logger> LOGGER;
-    private static boolean initialized = false;
-    public static Path WORKING_PATH;
-
-    public Collection<Thread> threads;
     public static final int HTTPD_PORT = 8080;
     public static final String PAGEBUILDER_DELIMITER = "~@~";
+    public static Path WORKING_PATH;
+    private static Map<String, Logger> LOGGER;
+    private static boolean initialized = false;
+
+    Collection<Thread> threads;
 
     Init() {
-        init();
-    }
-
-    public static Logger getLogger(String name) {
-        return LOGGER.get(LOGGER.containsKey(name) ? name : Thread.currentThread().getName());
-    }
-
-    private void init() {
         if (!initialized) {
-            String runPath = System.getProperty("java.class.path").split(";")[0];
+            String runPath = System.getProperty("java.class.path").split(System.getProperty("path.separator"))[0];
             WORKING_PATH = runPath.endsWith(".jar") ? Paths.get(runPath).getParent() : Paths.get(runPath).getParent().getParent();
             LOGGER = new HashMap<>();
             threads = new ArrayList<>();
@@ -52,6 +43,10 @@ public class Init {
             threads.forEach(Thread::start);
         }
         initialized = true;
+    }
+
+    public static Logger getLogger(String name) {
+        return LOGGER.get(LOGGER.containsKey(name) ? name : Thread.currentThread().getName());
     }
 
     private void initThreads(Runnable... runnable) {

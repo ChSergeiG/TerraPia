@@ -6,19 +6,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public enum HandlerEnum {
-    ROOT("/", new HandlerStorage.RootHandler(), "www", "index.html"),
+    ROOT("/", new HandlerStorage.RootHandler()),
     FAVICON("/favicon.ico", new HandlerStorage.FaviconHandler(), "www", "favicon.ico"),
-    TERR("/terr", new HandlerStorage.TerrHandler(), ""),
+    TERR("/terr", new HandlerStorage.TerrHandler()),
     CSS("/css/style.css", new HandlerStorage.CssHandler(), "www", "css", "style.css");
-
-    private String url;
-
-    public Path getFilePath() {
-        return filePath;
-    }
 
     private Path filePath;
     private HttpHandler handler;
+    private String url;
 
     HandlerEnum(String url, HttpHandler handler, String... filePath) {
         this.url = url;
@@ -28,6 +23,10 @@ public enum HandlerEnum {
 
     public String getUrl() {
         return url;
+    }
+
+    public Path getFilePath() {
+        return filePath;
     }
 
     public HttpHandler getHandler() {
