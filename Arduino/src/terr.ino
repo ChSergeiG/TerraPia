@@ -18,11 +18,11 @@
 
 DHT11 dht(HIM);
 
-boolean day = false;
-boolean bgM = false;
-boolean hum = false;
-boolean smM = false;
-boolean lmp = false;
+bool day = false;
+bool bgM = false;
+bool hum = false;
+bool smM = false;
+bool lmp = false;
 int counter = 30;
 int hourCounter = 1800;
 int hourLux = 0;
@@ -45,12 +45,6 @@ void setup() {
   Serial.begin(9600);
 }
 
-void doSafeProcedure () {
-digitalWrite(VCC_2, LOW);
-delay(120000);
-digitalWrite(VCC_2, HIGH);
-}
-
 void loop() {
   // get sensor data
   int check;
@@ -69,11 +63,6 @@ void loop() {
       break;
   }
 
-if (humidity == -1 && hourCounter > 1739) {
-  doSafeProcedure();
-  hourCounter += 60
-}
-
   if (hourCounter >= 1800) {
     digitalWrite(VCC_4, HIGH);
     delay(1000);
@@ -87,10 +76,12 @@ if (humidity == -1 && hourCounter > 1739) {
     // large heater
     bgM = temperature <= 25;
     // humidifier
-    if (humidity < 40) {
+    if (humidity == -1 && hourCounter < 60) {
       hum = true;
-    } else if (humidity > 45) {
+    } else if (humidity < 40) {
       hum = false;
+    } else if (humidity > 45) {
+      hum = true;
     }
     // small heater
     smM = temperature <= 27;
