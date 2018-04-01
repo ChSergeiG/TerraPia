@@ -45,6 +45,12 @@ void setup() {
   Serial.begin(9600);
 }
 
+void doSafeProcedure () {
+digitalWrite(VCC_2, LOW);
+delay(120000);
+digitalWrite(VCC_2, HIGH);
+}
+
 void loop() {
   // get sensor data
   int check;
@@ -62,6 +68,11 @@ void loop() {
       humidity = -1;
       break;
   }
+
+if (humidity == -1 && hourCounter > 1739) {
+  doSafeProcedure();
+  hourCounter += 60
+}
 
   if (hourCounter >= 1800) {
     digitalWrite(VCC_4, HIGH);
