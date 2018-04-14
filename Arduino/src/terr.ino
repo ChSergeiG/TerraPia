@@ -1,12 +1,6 @@
 #include "TroykaDHT11.h"
 #include "Terr.h"
 
-
-// #define VCC_1 5  // LARGE HEATER
-// #define VCC_2 6  // HUMIDIFIER
-// #define VCC_3 7  // SMALL HEATER
-// #define VCC_4 8  // LAMP
-
 #define HUM A0
 #define LUX A1
 
@@ -22,28 +16,16 @@ int hourCounter = 1800;
 int hourLux = 0;
 
 TPin bg_heater(5, bgM);
-Tpin humid(6, hum);
-Tpin s_heater(7, smM);
-Tpin lamp(8, lmp);
-Tpin system(13, false);
+TPin humid(6, hum);
+TPin s_heater(7, smM);
+TPin lamp(8, lmp);
+TPin system(13, false);
 
 DHT11 dht(HUM);
 
 void setup() {
   dht.begin();
-  // pinMode(VCC_1, OUTPUT);
-  // pinMode(VCC_2, OUTPUT);
-  // pinMode(VCC_3, OUTPUT);
-  // pinMode(VCC_4, OUTPUT);
   pinMode(LUX, INPUT);
-  // pinMode(SYSTEM,OUTPUT);
-  //
-  // digitalWrite(VCC_1,bgM?LOW:HIGH);
-  // digitalWrite(VCC_2,hum?LOW:HIGH);
-  // digitalWrite(VCC_3,smM?LOW:HIGH);
-  // digitalWrite(VCC_4,lmp?LOW:HIGH);
-  // digitalWrite(SYSTEM,LOW);
-
   Serial.begin(9600);
 }
 
@@ -64,12 +46,12 @@ void loop() {
       humidity = -1;
       break;
     case DHT_ERROR_TIMEOUT:
-      Serial.println("Timeout error; ");
+      Serial.print("Timeout error; ");
       temperature = -1;
       humidity = -1;
       break;
     default:
-      Serial.println("Unknown error; ");
+      Serial.print("Unknown error; ");
       temperature = -1;
       humidity = -1;
       break;
@@ -82,13 +64,15 @@ void loop() {
     hourLux = analogRead(LUX);
     lmp = hourLux < 477;
     day = lmp;
+    // large heater
+    bgM = !lmp;
+    lamp.setState(lmp);
+    bg_heater.setState(bgM);
     hourCounter = 0;
   }
 
   // every 30 cycles ~ 1 minute
   if (counter >= 30) {
-    // large heater
-    bgM = temperature <= 25;
     // humidifier
     if (humidity >= 0) {
       if (humidity < 50) {
@@ -104,14 +88,8 @@ void loop() {
     // small heater
     smM = temperature <= 27;
     // write pin states
-    bg_heater.setState(bgM);
     humid.setState(hum);
     s_heater.setState(smM);
-    lamp.setState(lmp);
-    // digitalWrite(VCC_1, bgM?LOW:HIGH);
-    // digitalWrite(VCC_2, hum?LOW:HIGH);
-    // digitalWrite(VCC_3, smM?LOW:HIGH);
-    // digitalWrite(VCC_4, lmp?LOW:HIGH);
     counter = 0;
   }
 

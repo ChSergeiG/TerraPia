@@ -15,11 +15,11 @@ private:
   bool _state;
 };
 
-Tpin::Tpin (int pin, bool state) {
+TPin::TPin (int pin, bool state) {
   pinMode(pin, OUTPUT);
   _pin = pin;
   _state = state;
-  setState(pin, state);
+  digitalWrite(_pin, _state?LOW:HIGH);
 }
 
 void TPin::invert() {
