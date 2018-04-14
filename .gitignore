@@ -1,8 +1,10 @@
-/*.iml
+/pom.xml
 /.idea/*
-/*/*.iml
+/**.iml
+/*.iml
 /*/lib/
 /out/*
 /classes/*
 /target/*
 /Arduino/.build/
+/**/META-INF
