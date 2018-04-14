@@ -81,13 +81,14 @@ void loop() {
     hourLux = analogRead(LUX);
     lmp = hourLux < 477;
     day = lmp;
+    bgM = !day;
     hourCounter = 0;
   }
 
   // every 30 cycles ~ 1 minute
   if (counter >= 30) {
     // large heater
-    bgM = temperature <= 25;
+    /// bgM = temperature <= 25;
     // humidifier
     if (humidity >= 0) {
       if (humidity < 50) {
