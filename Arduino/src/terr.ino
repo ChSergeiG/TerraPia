@@ -1,4 +1,5 @@
 #include "TroykaDHT11.h"
+#include "Terr.h"
 
 #define RPI_0 9
 #define RPI_2 10
@@ -45,10 +46,6 @@ void setup() {
   Serial.begin(9600);
 }
 
-bool itIsTime() {
-  return hourCounter < 60 || (hourCounter >= 900 && hourCounter <= 960);
-}
-
 void loop() {
   // get sensor data
   int check;
@@ -85,14 +82,13 @@ void loop() {
     hourLux = analogRead(LUX);
     lmp = hourLux < 477;
     day = lmp;
-    bgM = !day;
     hourCounter = 0;
   }
 
   // every 30 cycles ~ 1 minute
   if (counter >= 30) {
     // large heater
-    /// bgM = temperature <= 25;
+    bgM = temperature <= 25;
     // humidifier
     if (humidity >= 0) {
       if (humidity < 50) {
@@ -100,7 +96,7 @@ void loop() {
       } else {
         hum = false;
       }
-    } else if (humidity == -1 && itIsTime()) {
+    } else if (humidity == -1 && hourCounter < 60) {
       hum = true;
     } else {
       hum = false;
