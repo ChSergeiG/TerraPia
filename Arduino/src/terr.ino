@@ -1,23 +1,16 @@
 #include "TroykaDHT11.h"
 #include "Terr.h"
 
-#define RPI_0 9
-#define RPI_2 10
-#define RPI_3 11
-#define RPI_8 2
-#define RPI_9 3
 
-#define VCC_1 5  // LARGE HEATER
-#define VCC_2 6  // HUMIDIFIER
-#define VCC_3 7  // SMALL HEATER
-#define VCC_4 8  // LAMP
+// #define VCC_1 5  // LARGE HEATER
+// #define VCC_2 6  // HUMIDIFIER
+// #define VCC_3 7  // SMALL HEATER
+// #define VCC_4 8  // LAMP
 
 #define HUM A0
 #define LUX A1
 
 #define SYSTEM 13
-
-DHT11 dht(HUM);
 
 bool day = false;
 bool bgM = false;
@@ -28,20 +21,28 @@ int counter = 30;
 int hourCounter = 1800;
 int hourLux = 0;
 
+TPin bg_heater(5, bgM);
+Tpin humid(6, hum);
+Tpin s_heater(7, smM);
+Tpin lamp(8, lmp);
+Tpin system(13, false);
+
+DHT11 dht(HUM);
+
 void setup() {
   dht.begin();
-  pinMode(VCC_1, OUTPUT);
-  pinMode(VCC_2, OUTPUT);
-  pinMode(VCC_3, OUTPUT);
-  pinMode(VCC_4, OUTPUT);
+  // pinMode(VCC_1, OUTPUT);
+  // pinMode(VCC_2, OUTPUT);
+  // pinMode(VCC_3, OUTPUT);
+  // pinMode(VCC_4, OUTPUT);
   pinMode(LUX, INPUT);
-  pinMode(SYSTEM,OUTPUT);
-
-  digitalWrite(VCC_1,bgM?LOW:HIGH);
-  digitalWrite(VCC_2,hum?LOW:HIGH);
-  digitalWrite(VCC_3,smM?LOW:HIGH);
-  digitalWrite(VCC_4,lmp?LOW:HIGH);
-  digitalWrite(SYSTEM,LOW);
+  // pinMode(SYSTEM,OUTPUT);
+  //
+  // digitalWrite(VCC_1,bgM?LOW:HIGH);
+  // digitalWrite(VCC_2,hum?LOW:HIGH);
+  // digitalWrite(VCC_3,smM?LOW:HIGH);
+  // digitalWrite(VCC_4,lmp?LOW:HIGH);
+  // digitalWrite(SYSTEM,LOW);
 
   Serial.begin(9600);
 }
@@ -52,24 +53,23 @@ void loop() {
   int humidity;
   int temperature;
   int lux = analogRead(LUX);
-  check = dht.read();
-  switch (check) {
+  switch (dht.read()) {
     case DHT_OK:
       temperature = dht.getTemperatureC();
       humidity = dht.getHumidity();
       break;
     case DHT_ERROR_CHECKSUM:
-      Serial.println("Checksum error");
+      Serial.print("Checksum error; ");
       temperature = -1;
       humidity = -1;
       break;
     case DHT_ERROR_TIMEOUT:
-      Serial.println("Time out error");
+      Serial.println("Timeout error; ");
       temperature = -1;
       humidity = -1;
       break;
     default:
-      Serial.println("Unknown error");
+      Serial.println("Unknown error; ");
       temperature = -1;
       humidity = -1;
       break;
@@ -77,7 +77,7 @@ void loop() {
 
   // every 1800 cycles ~ 1 hour
   if (hourCounter >= 1800) {
-    digitalWrite(VCC_4, HIGH);
+    lamp.setState(false);
     delay(1000);
     hourLux = analogRead(LUX);
     lmp = hourLux < 477;
@@ -104,16 +104,20 @@ void loop() {
     // small heater
     smM = temperature <= 27;
     // write pin states
-    digitalWrite(VCC_1, bgM?LOW:HIGH);
-    digitalWrite(VCC_2, hum?LOW:HIGH);
-    digitalWrite(VCC_3, smM?LOW:HIGH);
-    digitalWrite(VCC_4, lmp?LOW:HIGH);
+    bg_heater.setState(bgM);
+    humid.setState(hum);
+    s_heater.setState(smM);
+    lamp.setState(lmp);
+    // digitalWrite(VCC_1, bgM?LOW:HIGH);
+    // digitalWrite(VCC_2, hum?LOW:HIGH);
+    // digitalWrite(VCC_3, smM?LOW:HIGH);
+    // digitalWrite(VCC_4, lmp?LOW:HIGH);
     counter = 0;
   }
 
   // write values into serial console
   char buff [96];
-  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d", counter, hourCounter, temperature, humidity, lux, hourLux, bgM, hum, smM, lmp);
+  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d", counter, hourCounter, temperature, humidity, lux, hourLux, bg_heater.getState(), humid.getState(), s_heater.getState(), lamp.getState());
   for (int j = 0; j < i; j++) {
     Serial.print(buff[j]);
   }

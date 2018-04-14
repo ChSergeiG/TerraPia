@@ -1,6 +1,7 @@
 /pom.xml
 /.idea/*
 /**.iml
+/*.iml
 /*/lib/
 /out/*
 /classes/*
