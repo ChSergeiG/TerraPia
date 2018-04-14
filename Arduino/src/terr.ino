@@ -45,6 +45,10 @@ void setup() {
   Serial.begin(9600);
 }
 
+bool itIsTime() {
+  return hourCounter < 60 || (hourCounter >= 900 && hourCounter <= 960);
+}
+
 void loop() {
   // get sensor data
   int check;
@@ -96,7 +100,7 @@ void loop() {
       } else {
         hum = false;
       }
-    } else if (humidity == -1 && hourCounter < 60) {
+    } else if (humidity == -1 && itIsTime()) {
       hum = true;
     } else {
       hum = false;
