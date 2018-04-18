@@ -4,6 +4,11 @@
 #include "TroykaDHT11.h"
 #include <Arduino.h>
 
+#define HUM A0
+#define LUX A1
+
+#define SYSTEM 13
+
 class TPin {
 public:
   TPin(int pin, bool state);

@@ -1,10 +1,4 @@
-#include "TroykaDHT11.h"
 #include "Terr.h"
-
-#define HUM A0
-#define LUX A1
-
-#define SYSTEM 13
 
 bool day = false;
 bool bgM = false;
@@ -19,7 +13,7 @@ TPin bg_heater(5, bgM);
 TPin humid(6, hum);
 TPin s_heater(7, smM);
 TPin lamp(8, lmp);
-TPin system(13, false);
+TPin system(SYSTEM, false);
 
 DHT11 dht(HUM);
 
