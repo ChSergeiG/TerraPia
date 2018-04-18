@@ -80,7 +80,7 @@ void loop() {
       } else {
         hum = false;
       }
-    } else if (humidity == -1 && hourCounter < 60) {
+    } else if (humidity == -1 && (hourCounter < 60 || (hourCounter >= 900 && hourCounter < 960))) {
       hum = true;
     } else {
       hum = false;
@@ -94,12 +94,11 @@ void loop() {
   }
 
   // write values into serial console
-  char buff [96];
-  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d", counter, hourCounter, temperature, humidity, lux, hourLux, bg_heater.getState(), humid.getState(), s_heater.getState(), lamp.getState());
+  char buff [98];
+  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d\n\0", counter, hourCounter, temperature, humidity, lux, hourLux, bg_heater.getState(), humid.getState(), s_heater.getState(), lamp.getState());
   for (int j = 0; j < i; j++) {
     Serial.print(buff[j]);
   }
-  Serial.println();
 
   // increase counters and delay
   counter++;
