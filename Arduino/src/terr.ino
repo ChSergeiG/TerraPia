@@ -5,22 +5,22 @@ bool bgM = false;
 bool hum = false;
 bool smM = false;
 bool lmp = false;
-int counter = 30;
-int hourCounter = 1800;
+int counter = SHORT_PERIOD_LENGTH;
+int hourCounter = LONG_PERIOD_LENGTH;
 int hourLux = 0;
 
-TPin bg_heater(5, bgM);
-TPin humid(6, hum);
-TPin s_heater(7, smM);
-TPin lamp(8, lmp);
-TPin system(SYSTEM, false);
+TPin bg_heater		(5, bgM);
+TPin humid		(6, hum);
+TPin s_heater		(7, smM);
+TPin lamp		(8, lmp);
+TPin system		(SYSTEM, false);
 
 DHT11 dht(HUM);
 
 void setup() {
   dht.begin();
   pinMode(LUX, INPUT);
-  Serial.begin(9600);
+  Serial.begin(SERIAL_SPEED);
 }
 
 void loop() {
@@ -35,24 +35,24 @@ void loop() {
       humidity = dht.getHumidity();
       break;
     case DHT_ERROR_CHECKSUM:
-      Serial.print("Checksum error; ");
-      temperature = -1;
-      humidity = -1;
+      Serial.print("CHSUM_ERR; ");
+      temperature = TEMP_FAIL;
+      humidity = HUM_FAIL;
       break;
     case DHT_ERROR_TIMEOUT:
-      Serial.print("Timeout error; ");
-      temperature = -1;
-      humidity = -1;
+      Serial.print("TMOUT_ERR; ");
+      temperature = TEMP_FAIL;
+      humidity = HUM_FAIL;
       break;
     default:
-      Serial.print("Unknown error; ");
-      temperature = -1;
-      humidity = -1;
+      Serial.print("UNKWN_ERR; ");
+      temperature = TEMP_FAIL;
+      humidity = HUM_FAIL;
       break;
   }
 
   // every 1800 cycles ~ 1 hour
-  if (hourCounter >= 1800) {
+  if (hourCounter >= LONG_PERIOD_LENGTH) {
     lamp.setState(false);
     delay(1000);
     hourLux = analogRead(LUX);
@@ -66,7 +66,7 @@ void loop() {
   }
 
   // every 30 cycles ~ 1 minute
-  if (counter >= 30) {
+  if (counter >= SHORT_PERIOD_LENGTH) {
     // humidifier
     if (humidity >= 0) {
       if (humidity < 50) {
@@ -74,7 +74,7 @@ void loop() {
       } else {
         hum = false;
       }
-    } else if (humidity == -1 && (hourCounter < 60 || (hourCounter >= 900 && hourCounter < 960))) {
+    } else if (humidity == HUM_FAIL && isCounterValid(hourCounter)) {
       hum = true;
     } else {
       hum = false;
@@ -97,5 +97,5 @@ void loop() {
   // increase counters and delay
   counter++;
   hourCounter++;
-  delay(2000);
+  delay(DELAY_MS);
 }

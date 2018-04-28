@@ -4,6 +4,14 @@
 #include "TroykaDHT11.h"
 #include <Arduino.h>
 
+#define SERIAL_SPEED 9600
+#define TEMP_FAIL -1
+#define HUM_FAIL -1
+#define DELAY_MS 2000
+
+#define LONG_PERIOD_LENGTH 1800
+#define SHORT_PERIOD_LENGTH 30
+
 #define HUM A0
 #define LUX A1
 
@@ -38,6 +46,10 @@ void TPin::setState(bool state) {
 
 bool TPin::getState() {
   return _state;
+}
+
+bool isCounterValid(int c) {
+  return c < 60 || (c >= 900 && c < 960);
 }
 
 #endif
