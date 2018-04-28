@@ -35,17 +35,17 @@ void loop() {
       humidity = dht.getHumidity();
       break;
     case DHT_ERROR_CHECKSUM:
-      Serial.print("Checksum error; ");
+      Serial.print("CHSUM_ERR; ");
       temperature = -1;
       humidity = -1;
       break;
     case DHT_ERROR_TIMEOUT:
-      Serial.print("Timeout error; ");
+      Serial.print("TMOUT_ERR; ");
       temperature = -1;
       humidity = -1;
       break;
     default:
-      Serial.print("Unknown error; ");
+      Serial.print("UNKWN_ERR; ");
       temperature = -1;
       humidity = -1;
       break;
