@@ -56,7 +56,7 @@ void loop() {
     lamp.setState(false);
     delay(1000);
     hourLux = analogRead(LUX);
-    lmp = hourLux < 477;
+    lmp = hourLux < 800;
     day = lmp;
     // large heater
     bgM = !lmp;
