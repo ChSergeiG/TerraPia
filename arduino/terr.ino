@@ -1,4 +1,4 @@
-#include "Terr.h"
+#include "terr.h"
 
 bool day = false;
 bool bgM = false;

@@ -1,7 +1,7 @@
 #ifndef __TERR__
 #define __TERR__
 
-#include "TroykaDHT11.h"
+#include "troyka.h"
 #include <Arduino.h>
 
 #define SERIAL_SPEED 9600
