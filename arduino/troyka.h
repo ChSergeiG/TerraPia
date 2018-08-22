@@ -14,18 +14,22 @@
 #include <Arduino.h>
 
 #define DHT_OK                0
-#define DHT_ERROR_CHECKSUM   -1
-#define DHT_ERROR_TIMEOUT    -2
+#define DHT_ERROR_CHECKSUM    1
+#define DHT_ERROR_TIMEOUT     2
 
 class DHT11
 {
- public:
+  public:
     explicit DHT11(uint8_t pin);
     void begin();
     uint8_t read();
-    uint8_t getTemperatureC() const { return _temperatureC; }
-    uint8_t getHumidity() const { return _humidity; }
- private:
+    uint8_t getTemperatureC() const {
+      return _temperatureC;
+    }
+    uint8_t getHumidity() const {
+      return _humidity;
+    }
+  private:
     uint8_t _pin;
     uint8_t _temperatureC;
     uint8_t _humidity;

@@ -1,5 +1,5 @@
-#ifndef __TERR__
-#define __TERR__
+#ifndef __TERR_H_
+#define __TERR_H_
 
 #include "troyka.h"
 #include <Arduino.h>
@@ -18,21 +18,21 @@
 #define SYSTEM 13
 
 class TPin {
-public:
-  TPin(int pin, bool state);
-  void invert();
-  void setState(bool state);
-  bool getState();
-private:
-  int _pin;
-  bool _state;
+  public:
+    TPin(int pin, bool state);
+    void invert();
+    void setState(bool state);
+    bool getState();
+  private:
+    int _pin;
+    bool _state;
 };
 
 TPin::TPin (int pin, bool state) {
   pinMode(pin, OUTPUT);
   _pin = pin;
   _state = state;
-  digitalWrite(_pin, _state?LOW:HIGH);
+  digitalWrite(_pin, _state ? LOW : HIGH);
 }
 
 void TPin::invert() {
@@ -41,7 +41,7 @@ void TPin::invert() {
 
 void TPin::setState(bool state) {
   _state = state;
-  digitalWrite(_pin, state?LOW:HIGH);
+  digitalWrite(_pin, state ? LOW : HIGH);
 }
 
 bool TPin::getState() {

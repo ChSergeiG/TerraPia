@@ -1,6 +1,8 @@
 apply plugin: 'java'
 
-group = 'TerraPia'
+// THESE ARE JUST EXAMPLES, YOU PROBABLY NEED TO CHANGE THEM.
+ext.arduinoDir = "/opt/arduino-1.8.4/arduino-1.8.4"
+ext.arduinoComPort = "/dev/ttyUSB0"
 version = '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
