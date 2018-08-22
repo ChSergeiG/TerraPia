@@ -1,10 +1,5 @@
-/pom.xml
-/.idea/*
+/.idea
 /**.iml
-/*.iml
-/*/lib/
-/out/*
-/classes/*
-/target/*
-/Arduino/.build/
-/**/META-INF
+/**/build
+/gradle*
+/.gradle*
