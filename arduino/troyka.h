@@ -30,4 +30,4 @@ class DHT11
     uint8_t _temperatureC;
     uint8_t _humidity;
 };
-#endif  // TROYKADHT11_H_
+#endif

@@ -8,7 +8,7 @@
 //  by www.amperka.ru
 /****************************************************************************/
 
-#include "TroykaDHT11.h"
+#include "troyka.h"
 
 DHT11::DHT11(uint8_t pin) {
     _pin = pin;
@@ -18,12 +18,12 @@ void DHT11::begin() {
 }
 
 uint8_t DHT11::read() {
-    // буффер данных
+    // буфер данных
     uint8_t bits[5];
     uint8_t cnt = 7;
     uint8_t idx = 0;
 
-    // очистка буффера
+    // очистка буфера
     for (int i = 0; i < 5; i++) bits[i] = 0;
 
     // согласование с датчиком
