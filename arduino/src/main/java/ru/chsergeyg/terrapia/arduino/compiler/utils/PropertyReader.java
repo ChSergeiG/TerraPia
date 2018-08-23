@@ -1,9 +1,15 @@
 package ru.chsergeyg.terrapia.arduino.compiler.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.management.RuntimeErrorException;
 import java.io.IOException;
 import java.util.Properties;
 
 public class PropertyReader {
+
+    private static final Logger logger = LoggerFactory.getLogger(PropertyReader.class);
 
     private static Properties props;
 
@@ -12,14 +18,33 @@ public class PropertyReader {
         try {
             props.load(PropertyReader.class.getClassLoader().getResourceAsStream("terr.properties"));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    public static synchronized String readValue(String key) {
+    private static String getProperty(String key) {
+        check();
+        return props.getProperty(key);
+    }
+
+
+    private static void check() {
         if (props == null) {
             init();
         }
-        return props.getProperty(key);
     }
+
+    public static synchronized String readString(String key) {
+        return getProperty(key);
+    }
+
+    public static synchronized Long readLong(String key) {
+        String property = getProperty(key);
+        return Long.parseLong(
+                property.toUpperCase()
+                        .endsWith("L") ? property.substring(0, property.length() - 2) : property
+        );
+    }
+
 }
