@@ -16,7 +16,9 @@ public class ExecUtils extends AbstractUtils {
     private static final Logger logger = LoggerFactory.getLogger(ExecUtils.class);
 
     static void runCmd(String cmd, File baseDir) {
-        Process exec;
+        Process exec = null;
+        logger.debug(cmd);
+        logger.debug("dir: " + baseDir);
         try {
             exec = Runtime.getRuntime().exec(cmd, new String[0], baseDir);
         } catch (IOException e) {
@@ -49,7 +51,7 @@ public class ExecUtils extends AbstractUtils {
     static void execCmd(List<String> commands) {
         runCmd(
                 commands.stream().reduce("", (a, b) -> a.concat(b).concat(" ")),
-                buildDirectory
+                PathsEnum.PROJECT_COMPILE_DIR.getFile()
         );
     }
 

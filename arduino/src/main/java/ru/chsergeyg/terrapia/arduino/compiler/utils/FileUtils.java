@@ -31,9 +31,8 @@ public class FileUtils extends AbstractUtils {
 
     static Map<String, Long> extractArchiveIndex() {
         Map<String, Long> result = new HashMap<>();
-        File input = new File(buildDirectory, "archiveindex.dat");
-        if (input.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+        if (PathsEnum.PROJECT_INDEX_FILE.getFile().exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(PathsEnum.PROJECT_INDEX_FILE.getFile()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] elements = line.split("=", 2);
@@ -48,9 +47,7 @@ public class FileUtils extends AbstractUtils {
     }
 
     static void saveArchiveIndex(Map<String, Long> index) {
-        File output = new File(buildDirectory, "archiveindex.dat");
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(output))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PathsEnum.PROJECT_INDEX_FILE.getFile()))) {
             index.entrySet().stream().forEach(e -> {
                 try {
                     writer.write(e.getKey() + "=" + e.getValue());
@@ -70,9 +67,9 @@ public class FileUtils extends AbstractUtils {
 
     static void archiveObjectFile(File objectFile) throws IOException {
         List<String> params = new ArrayList<>();
-        params.add(PathsEnum.ARDUINO_DIR.getFile().getAbsolutePath() + "/hardware/tools/avr/bin/avr-ar");
+        params.add(PathsEnum.ARDUINO_BINS_DIR.getFile().getAbsolutePath() + "avr-ar");
         params.add("rcs");
-        params.add(buildDirectory.getAbsolutePath() + "/core.a");
+        params.add(PathsEnum.PROJECT_COMPILE_CORE_A_FILE.getFile().getAbsolutePath());
         params.add(objectFile.getAbsolutePath());
         execCmd(params);
     }

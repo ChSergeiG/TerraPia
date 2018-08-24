@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 public enum PathsEnum {
 
     // $/
-    ARDUINO_DIR(PropertyReader.readString("file.arduinoDir")),
+    ARDUINO_DIR(Paths.get(PropertyReader.readString("file.arduinoDir"))),
     // $/hardware/arduino/avr/cores/
     ARDUINO_CORES_DIR(ARDUINO_DIR, PropertyReader.readString("file.arduinoCoresDir")),
     // $/hardware/arduino/avr/cores/arduino
@@ -18,6 +18,8 @@ public enum PathsEnum {
     ARDUINO_SELECTED_VARIANT_DIR(ARDUINO_VARIANTS_DIR, PropertyReader.readString("file.arduinoVariant")),
     // $/libraries/
     ARDUINO_LIBRARIES_DIR(ARDUINO_DIR, PropertyReader.readString("file.arduinoLibrariesDir")),
+    // $//hardware/tools/avr/bin/
+    ARDUINO_BINS_DIR(ARDUINO_DIR, PropertyReader.readString("file.arduinoBinsDir")),
     // %/arduino/
     PROJECT_DIR(Paths.get(PropertyReader.readString("file.projectDir"))),
     // %/arduino/libs/
@@ -35,7 +37,8 @@ public enum PathsEnum {
     // %/arduino/compile/terr.ino.hex
     PROJECT_COMPILE_EEP(PROJECT_COMPILE_DIR, PropertyReader.readString("file.sketchMainFile") + ".eep"),
     // %/arduino/terr.ino
-    PROJECT_INO_FILE(PROJECT_DIR, PropertyReader.readString("file.sketchMainFile")),;
+    PROJECT_INO_FILE(PROJECT_DIR, PropertyReader.readString("file.sketchMainFile")),
+    ;
 
     Path path;
 
@@ -46,7 +49,6 @@ public enum PathsEnum {
     public File getFile() {
         return path.toFile();
     }
-
 
     PathsEnum(String first, String... more) {
         path = Paths.get(first, more);

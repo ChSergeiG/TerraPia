@@ -28,32 +28,25 @@ public class UtilsTest {
                 {PathsEnum.ARDUINO_VARIANTS_DIR},
                 {PathsEnum.ARDUINO_SELECTED_VARIANT_DIR},
                 {PathsEnum.ARDUINO_LIBRARIES_DIR},
+                {PathsEnum.ARDUINO_BINS_DIR},
                 {PathsEnum.PROJECT_DIR},
                 {PathsEnum.PROJECT_LIBRARIES_DIR},
                 {PathsEnum.PROJECT_COMPILE_DIR},
         };
     }
 
-    @DataProvider(name = "enumFiles")
-    public Object[][] enumFiles() {
-        return new Object[][]{
-                {PathsEnum.PROJECT_INO_FILE},
-        };
-    }
-
-
     @Test
-    public void gitStatusRunCmd() throws Exception {
+    public void gitStatusRunCmd() {
         ExecUtils.runCmd("git status", new File("."));
     }
 
     @Test(expectedExceptions = UtilException.class)
-    public void gitStatusRunCmdExc() throws Exception {
+    public void gitStatusRunCmdExc() {
         ExecUtils.runCmd("git status1", new File("."));
     }
 
     @Test
-    public void gitStatusRunCmdExcCatch() throws Exception {
+    public void gitStatusRunCmdExcCatch() {
         try {
             ExecUtils.runCmd("git status1", new File("."));
         } catch (UtilException ex) {
@@ -65,7 +58,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void gitStatusExecCmd() throws Exception {
+    public void gitStatusExecCmd() {
         List<String> cmd = new ArrayList<>();
         cmd.add("git");
         cmd.add("status");
@@ -73,7 +66,7 @@ public class UtilsTest {
     }
 
     @Test(expectedExceptions = UtilException.class)
-    public void gitStatusExecCmdExc() throws Exception {
+    public void gitStatusExecCmdExc() {
         List<String> cmd = new ArrayList<>();
         cmd.add("git");
         cmd.add("status1");
@@ -81,7 +74,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void gitStatusExecCmdExcCatch() throws Exception {
+    public void gitStatusExecCmdExcCatch() {
         List<String> cmd = new ArrayList<>();
         cmd.add("git");
         cmd.add("status1");
@@ -95,13 +88,8 @@ public class UtilsTest {
     }
 
     @Test(dataProvider = "enumDirs")
-    public void checkPaths(PathsEnum pathEnum) {
+    public void checkDirs(PathsEnum pathEnum) {
         Assert.assertTrue(pathEnum.getFile().exists() && pathEnum.getFile().isDirectory());
-    }
-
-    @Test(dataProvider = "enumFiles")
-    public void checkFiles(PathsEnum pathEnum) {
-        Assert.assertTrue(pathEnum.getFile().exists() && !pathEnum.getFile().isDirectory());
     }
 
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static ru.chsergeyg.terrapia.arduino.compiler.utils.CompileUtils.buildFile;
 import static ru.chsergeyg.terrapia.arduino.compiler.utils.FileUtils.enumIncludes;
@@ -15,14 +14,13 @@ import static ru.chsergeyg.terrapia.arduino.compiler.utils.FileUtils.enumSourceF
 
 public class TaskUtils extends AbstractUtils {
 
-   static Logger logger = LoggerFactory.getLogger(TaskUtils.class);
+    static Logger logger = LoggerFactory.getLogger(TaskUtils.class);
 
     public static void init() {
         clean();
         PathsEnum.PROJECT_DIR.getFile().mkdirs();
         PathsEnum.PROJECT_COMPILE_DIR.getFile().mkdirs();
     }
-
 
     public static void build() {
         init();
@@ -52,22 +50,14 @@ public class TaskUtils extends AbstractUtils {
                 enumSourceFiles(arduinoFiles, libDir);
             }
         });
+
         logger.info("Compiling source files");
 
-        sketchFiles.stream().map(e -> buildFile(e,libraries)).collect(Collectors.toList());
+        sketchFiles.forEach(skf -> buildFile(skf, libraries));
+        arduinoFiles.forEach(arf -> buildFile(arf, libraries));
+
+
         /**
-
-
-
-         println "Compiling source files"
-         sketch_files.each {
-         sketch_object_files << build_file(it, libraries)
-         }
-
-         arduino_files.each {
-         arduino_object_files << build_file(it, libraries)
-         }
-
          def archive_index = extract_archive_index()
          if (!can_skip_archive(archive_index, arduino_object_files)) {
          println "Archiving object files"
@@ -130,6 +120,20 @@ public class TaskUtils extends AbstractUtils {
     }
 
     private static void clean() {
-        PathsEnum.PROJECT_COMPILE_DIR.getFile().delete();
+        delDir(PathsEnum.PROJECT_COMPILE_DIR.getFile());
+    }
+
+    private static void delDir(File dir) {
+        if (dir.isFile()) {
+            dir.delete();
+        }
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            dir.delete();
+        } else {
+            for (File f : files) {
+                delDir(f);
+            }
+        }
     }
 }

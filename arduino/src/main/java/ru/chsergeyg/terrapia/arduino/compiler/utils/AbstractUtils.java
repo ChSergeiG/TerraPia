@@ -6,18 +6,13 @@ import java.util.List;
 
 abstract class AbstractUtils {
 
-    static File buildDirectory;
     static List<String> extensions;
 
-    static Long cpuClock;
+    static String cpuClock;
     static String cpuName;
     static String arduinoComPort;
 
     static {
-        buildDirectory = new File("./arduino/build");
-        if (!buildDirectory.exists()) {
-            buildDirectory.mkdirs();
-        }
         extensions = new ArrayList<>();
         extensions.add("c");
         extensions.add("cpp");
@@ -26,7 +21,7 @@ abstract class AbstractUtils {
 
         arduinoComPort = PropertyReader.readString("dev.arduinoComPort");
         cpuName = PropertyReader.readString("cpu.name");
-        cpuClock = PropertyReader.readLong("cpu.clock");
+        cpuClock = PropertyReader.readString("cpu.clock");
     }
 
 }
