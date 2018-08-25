@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.function.BinaryOperator;
 
 public class ExecUtils extends AbstractUtils {
 
@@ -25,27 +24,26 @@ public class ExecUtils extends AbstractUtils {
             logger.error(e.getMessage());
             throw new UtilException(e);
         }
-
         BufferedReader standardReader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
         BufferedReader errorReader = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+        Thread stdo = new Thread(() -> standardReader.lines().forEach(logger::debug));
+        Thread stde = new Thread(() -> errorReader.lines().forEach(logger::error));
+        stdo.setName("stdo");
+        stde.setName("stde");
+        stdo.start();
+        stde.start();
         try {
             exec.waitFor();
         } catch (InterruptedException ex) {
-            logger.error(ex.getMessage());
             throw new UtilException(ex);
         }
-
         if (exec.exitValue() != 0) {
-            BinaryOperator<String> operator = (a, b) -> a.concat(b).concat("\n");
-            throw new UtilException(
-                    String.format(
-                            "Command execution failed (Exit code: %s)\n%s\n%s\ncmd: %s",
-                            exec.exitValue(),
-                            standardReader.lines().reduce("", operator),
-                            errorReader.lines().reduce("", operator),
-                            cmd)
-            );
+            String message = String.format("Command execution failed (Exit code: %s)\ncmd: %s", exec.exitValue(), cmd);
+            logger.error(message);
+            throw new UtilException(message);
         }
+        stdo.interrupt();
+        stde.interrupt();
     }
 
     static void execCmd(List<String> commands) {

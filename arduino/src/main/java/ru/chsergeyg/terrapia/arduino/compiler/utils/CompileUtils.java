@@ -30,8 +30,8 @@ public class CompileUtils extends AbstractUtils {
         }
         logger.info("Compiling " + file.getName());
         boolean isCpp = FilenameUtils.isExtension(file.getName(), "cpp") ||
-                FilenameUtils.isExtension(file.getName(), "ino") /*||
-                FilenameUtils.isExtension(file.getName(), "h")*/;
+                FilenameUtils.isExtension(file.getName(), "ino") ||
+                FilenameUtils.isExtension(file.getName(), "h");
 
         String compiler = isCpp ? "avr-g++" : "avr-gcc";
         List<String> commands = new ArrayList<>();
