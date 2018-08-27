@@ -3,7 +3,6 @@ package ru.chsergeyg.terrapia.arduino.compiler.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.RuntimeErrorException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -37,14 +36,6 @@ public class PropertyReader {
 
     public static synchronized String readString(String key) {
         return getProperty(key);
-    }
-
-    public static synchronized Long readLong(String key) {
-        String property = getProperty(key);
-        return Long.parseLong(
-                property.toUpperCase()
-                        .endsWith("L") ? property.substring(0, property.length() - 2) : property
-        );
     }
 
 }

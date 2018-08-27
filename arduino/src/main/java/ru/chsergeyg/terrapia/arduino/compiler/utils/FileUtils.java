@@ -3,6 +3,7 @@ package ru.chsergeyg.terrapia.arduino.compiler.utils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.chsergeyg.executor.Executor;
 import ru.chsergeyg.terrapia.arduino.compiler.exceptions.UtilException;
 
 import java.io.BufferedReader;
@@ -21,8 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ru.chsergeyg.terrapia.arduino.compiler.utils.ExecUtils.execCmd;
-
 public class FileUtils extends AbstractUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
@@ -31,8 +30,8 @@ public class FileUtils extends AbstractUtils {
 
     static Map<String, Long> extractArchiveIndex() {
         Map<String, Long> result = new HashMap<>();
-        if (PathsEnum.PROJECT_INDEX_FILE.getFile().exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(PathsEnum.PROJECT_INDEX_FILE.getFile()))) {
+        if (PathsEnum.PROJECT_ARCHIVE_INDEX_FILE.getFile().exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(PathsEnum.PROJECT_ARCHIVE_INDEX_FILE.getFile()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] elements = line.split("=", 2);
@@ -47,7 +46,7 @@ public class FileUtils extends AbstractUtils {
     }
 
     static void saveArchiveIndex(Map<String, Long> index) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PathsEnum.PROJECT_INDEX_FILE.getFile()))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PathsEnum.PROJECT_ARCHIVE_INDEX_FILE.getFile()))) {
             index.entrySet().stream().forEach(e -> {
                 try {
                     writer.write(e.getKey() + "=" + e.getValue());
@@ -65,13 +64,14 @@ public class FileUtils extends AbstractUtils {
     }
 
 
-    static void archiveObjectFile(File objectFile) throws IOException {
+    static void archiveObjectFile(File objectFile) {
         List<String> params = new ArrayList<>();
-        params.add(PathsEnum.ARDUINO_BINS_DIR.getFile().getAbsolutePath() + "avr-ar");
-        params.add("rcs");
-        params.add(PathsEnum.PROJECT_COMPILE_CORE_A_FILE.getFile().getAbsolutePath());
-        params.add(objectFile.getAbsolutePath());
-        execCmd(params);
+        Executor.getInstance()
+                .a(PathsEnum.ARDUINO_BINARIES_DIR.toString(), "avr-ar")
+                .o("rcs")
+                .o(PathsEnum.PROJECT_BUILD_CORE_A_FILE.toString())
+                .o(objectFile.getAbsolutePath())
+                .execute(PathsEnum.PROJECT_BUILD_DIR.getPath());
     }
 
     public static void enumSourceFiles(List<File> fileList, File directory) {
@@ -98,8 +98,7 @@ public class FileUtils extends AbstractUtils {
         return result.get();
     }
 
-    public static List<String> enumIncludes(File file) {
-        List<String> result = new ArrayList<>();
+    public static void enumIncludes(List<String> hs, File file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -108,7 +107,7 @@ public class FileUtils extends AbstractUtils {
                     String header = matcher.group(1);
                     if (header.endsWith(".h")) {
                         header = header.substring(0, header.length() - 2);
-                        result.add(header);
+                        hs.add(header);
                     }
                 }
             }
@@ -116,13 +115,5 @@ public class FileUtils extends AbstractUtils {
             logger.error(ex.getMessage());
             throw new UtilException(ex);
         }
-        return result;
     }
-/**
- def printSubDirs(File dir) {
- dir.listFiles().each {
- if (it.isDirectory() && !it.name.startsWith(".")) println(it.name)
- }
- }
- */
 }

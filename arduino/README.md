@@ -52,7 +52,7 @@
 ###### Build:
 1) `enumSourceFiles(sketchFiles, $PROJECT_DIR)`. Enumerating all sketch files
 2) `enumSourceFiles(arduinoFiles, $ARDUINO_CORE_SELECTED_DIR)`. Enumerating all files in core directory
-3) `enumIncludes(sketchFiles)`. Return includes in sketch files as `includes` list
+3) `enumIncludes($SKETCH_MAIN_FILE)`. Return includes in sketch file as `includes` list
 4) `enumSourceFiles(arduinoFiles, ...)`. For each `$include` entry in `includes` do next
 	- get directory with name `$ARDUINO_LIBRARIES_DIR\$include`, and - if it exists - add it to `libraries` list and do `enumSourceFiles()` for it, adding results to `$arduinoFiles` list
 	- get directory with name `$PROJECT_LIBRARIES_DIR\$include`, and - if it exists - add it to `libraries` list and do `enumSourceFiles()` for it, adding results to `$arduinoFiles` list
