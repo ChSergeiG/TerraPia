@@ -112,16 +112,15 @@ public class TaskUtils extends AbstractUtils {
     }
 
     public static void listArduinoLibraries() {
-        logger.info("Core libraries list:");
+        logger.info("Arduino core libraries list:");
         Stream.of(PathsEnum.ARDUINO_LIBRARIES_DIR.getFile().listFiles())
-                .forEach(file -> logger.info("[ard_libraries] " + file.getName()));
+                .forEach(file -> logger.info("[arduino_core_libraries] " + file.getName()));
     }
 
     public static void listProjectLibraries() {
         logger.info("Project libraries list:");
         File[] files = PathsEnum.PROJECT_LIBRARIES_DIR.getFile().listFiles();
         if (files == null) {
-            logger.info("[proj_libraries] null");
             return;
         }
         Stream.of(files).forEach(file -> logger.info("[proj_libraries] " + file.getName()));
