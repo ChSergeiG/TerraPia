@@ -10,10 +10,10 @@ int hourCounter = LONG_PERIOD_LENGTH;
 int hourLux = 0;
 
 TPin bg_heater		(5, bgM);
-TPin humid		(6, hum);
-TPin s_heater		(7, smM);
-TPin lamp		(8, lmp);
-TPin system		(SYSTEM, false);
+TPin humid          (6, hum);
+TPin s_heater       (7, smM);
+TPin lamp           (8, lmp);
+TPin systempin      (SYSTEM, false);
 
 DHT11 dht(HUM);
 
@@ -25,7 +25,6 @@ void setup() {
 
 void loop() {
   // get sensor data
-  int check;
   int humidity;
   int temperature;
   int lux = analogRead(LUX);
@@ -69,11 +68,7 @@ void loop() {
   if (counter >= SHORT_PERIOD_LENGTH) {
     // humidifier
     if (humidity >= 0) {
-      if (humidity < 50) {
-        hum = true;
-      } else {
-        hum = false;
-      }
+      hum = humidity < 50;
     } else if (humidity == HUM_FAIL && isCounterValid(hourCounter)) {
       hum = true;
     } else {
@@ -89,7 +84,19 @@ void loop() {
 
   // write values into serial console
   char buff [98];
-  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d\n\0", counter, hourCounter, temperature, humidity, lux, hourLux, bg_heater.getState(), humid.getState(), s_heater.getState(), lamp.getState());
+  int i = sprintf(
+            buff,
+            "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d\n",
+            counter,
+            hourCounter,
+            temperature,
+            humidity,
+            lux,
+            hourLux,
+            bg_heater.getState(),
+            humid.getState(),
+            s_heater.getState(),
+            lamp.getState());
   for (int j = 0; j < i; j++) {
     Serial.print(buff[j]);
   }

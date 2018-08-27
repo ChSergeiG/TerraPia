@@ -2,3 +2,4 @@ rootProject.name = 'TerraPia'
 
 include 'arduino'
 include 'server'
+
