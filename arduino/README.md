@@ -1,4 +1,4 @@
-#How to compile arduino sketch via CLI
+# How to compile arduino sketch via CLI
 
 ###### Based on [gradle-arduino](https://github.com/jfklingler/gradle-arduino)
 
@@ -35,18 +35,25 @@
 2) `enumIncludes(List<File> list)`. Get all `#include ...` parameters from files in `list` and return it as `includes` list
 3) `buildFile(File target, List<File> libs)`. Return compiled file link.
 	- for *.cpp and *.ino files execute
-    -     $ARDUINO_BINARIES_DIR\avr-g++ -x c++ -c -g -Os -Wall -fno-exceptions -ffunction-sections -fdata-sections -mmcu=$ARDUINO_MCU -DF_CPU=$ARDUINO_FCPU -MMD -DUSB_VID=null -DUSB_PID=null -DARDUINO=105 -I$ARDUINO_CORE_SELECTED_DIR -I$ARDUINO_VARIANT_SELECTED_DIR -I{every entry from $libs} $target -o$target.o
+    -     $ARDUINO_BINARIES_DIR\avr-g++ -x c++ -c -g -Os -Wall -fno-exceptions -ffunction-sections -fdata-sections
+          -mmcu=$ARDUINO_MCU -DF_CPU=$ARDUINO_FCPU -MMD -DUSB_VID=null -DUSB_PID=null -DARDUINO=105
+          -I$ARDUINO_CORE_SELECTED_DIR -I$ARDUINO_VARIANT_SELECTED_DIR -I{every entry from $libs} $target -o$target.o
 	- for other files execute
-    -     $ARDUINO_BINARIES_DIR\avr-gcc -c -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=$ARDUINO_MCU -DF_CPU=$ARDUINO_FCPU -MMD -DUSB_VID=null -DUSB_PID=null -DARDUINO=105 -I$ARDUINO_CORE_SELECTED_DIR -I$ARDUINO_VARIANT_SELECTED_DIR -I{every entry from $libs} $target -o$target.o
+    -     $ARDUINO_BINARIES_DIR\avr-gcc -c -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=$ARDUINO_MCU
+          -DF_CPU=$ARDUINO_FCPU -MMD -DUSB_VID=null -DUSB_PID=null -DARDUINO=105 -I$ARDUINO_CORE_SELECTED_DIR 
+          -I$ARDUINO_VARIANT_SELECTED_DIR -I{every entry from $libs} $target -o$target.o
 4) `extractArchiveIndex()`. If exists file `$PROJECT_ARCHIVE_INDEX_FILE` - return it consistency as LinkedHashMap<String, String>. If not exists - return empty map
 5) `canSkipArchive(Map<String, String> index, List<File> files)`. Return boolean - can we skip reindex `$files` according `$index`?
 6) `archiveObjectFile(File file)`. Execute
 	-     $ARDUINO_BINARIES_DIR\avr-ar rcs $PROJECT_BUILD_CORE_A $file.getAbsolutePath()
 7) `saveArchiveIndex(Map<String, String> index)`. Write $index to `$PROJECT_ARCHIVE_INDEX_FILE`
 8) `link(List<File> files)`. Execute
-	-     $ARDUINO_BINARIES_DIR\avr-gcc -Os -Wl,--gc-sections -mmcu=$ARDUINO_MCU -o$PROJECT_ELF_FILE {every entry from $sketchObjectFiles}.getAbsolutePath() $PROJECT_BUILD_CORE_A -L$PROJECT_BUILD_DIR -lm 
+	-     $ARDUINO_BINARIES_DIR\avr-gcc -Os -Wl,--gc-sections -mmcu=$ARDUINO_MCU 
+          -o$PROJECT_ELF_FILE {every entry from $sketchObjectFiles}.getAbsolutePath()
+          $PROJECT_BUILD_CORE_A -L$PROJECT_BUILD_DIR -lm 
 9) `objcopy()`
-	-     $ARDUINO_BINARIES_DIR\avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 $PROJECT_ELF_FILE $PROJECT_EEP_FILE
+	-     $ARDUINO_BINARIES_DIR\avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
+	      --no-change-warnings --change-section-lma .eeprom=0 $PROJECT_ELF_FILE $PROJECT_EEP_FILE
 	-     $ARDUINO_BINARIES_DIR\avr-objcopy -O ihex -R .eeprom $PROJECT_ELF_FILE $PROJECT_HEX_FILE
 	
 ###### Build:
@@ -67,4 +74,5 @@
 
 ###### Upload:
 1) Execute
-	-     $ARDUINO_BINARIES_DIR\avrdude -C$ARDUINO_AVRDUDE_CONF -v -p$ARDUINO_MCU -carduino" -P$ARDUINO_COMPORT -b$ARDUINO_BURNRATE -D -Uflash:w:$PROJECT_HEX_FILE:i
+	-     $ARDUINO_BINARIES_DIR\avrdude -C$ARDUINO_AVRDUDE_CONF -v -p$ARDUINO_MCU -carduino -P$ARDUINO_COMPORT
+	      -b$ARDUINO_BURNRATE -D -Uflash:w:$PROJECT_HEX_FILE:i

@@ -39,7 +39,8 @@ public enum PathsEnum {
     // %/arduino/libs/
     PROJECT_LIBRARIES_DIR(PROJECT_DIR, PropertyReader.readString("file.projectLibrariesDir")),
     // %/arduino/terr.ino
-    PROJECT_INO_FILE(PROJECT_DIR, PropertyReader.readString("file.sketchMainFile")),;
+    PROJECT_INO_FILE(PROJECT_DIR, PropertyReader.readString("file.sketchMainFile")),
+    ;
 
     Path path;
 
@@ -65,6 +66,6 @@ public enum PathsEnum {
 
     @Override
     public String toString() {
-        return this.getFile().getAbsolutePath();
+        return this.getPath().normalize().toFile().getAbsolutePath();
     }
 }
