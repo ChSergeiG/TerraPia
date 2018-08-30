@@ -29,8 +29,7 @@ public class CompileUtils extends AbstractUtils {
         }
         logger.info("Compiling " + file.getName());
         boolean isCpp = FilenameUtils.isExtension(file.getName(), "cpp") ||
-                FilenameUtils.isExtension(file.getName(), "ino") ||
-                FilenameUtils.isExtension(file.getName(), "h");
+                FilenameUtils.isExtension(file.getName(), "ino");
         String compiler = isCpp ? "avr-g++" : "avr-gcc";
         Executor.getInstance()
                 .a(PathsEnum.ARDUINO_BINARIES_DIR.toString(), compiler)
@@ -92,7 +91,7 @@ public class CompileUtils extends AbstractUtils {
                 .o("-R")
                 .o(".eeprom")
                 .o(PathsEnum.PROJECT_COMPILE_ELF.toString())
-                .o(PathsEnum.PROJECT_COMPILE_EEP.toString())
+                .o(PathsEnum.PROJECT_COMPILE_HEX.toString())
                 .execute(PathsEnum.PROJECT_BUILD_DIR.getPath());
     }
 }
