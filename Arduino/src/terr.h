@@ -7,10 +7,14 @@
 #define SERIAL_SPEED 9600
 #define TEMP_FAIL -1
 #define HUM_FAIL -1
-#define DELAY_MS 2000
+#define DELAY_MS 1105
 
+#define DAY_PERIOD_LENGTH 43200
 #define LONG_PERIOD_LENGTH 1800
 #define SHORT_PERIOD_LENGTH 30
+
+#define DAY 0
+#define NIGHT 12
 
 #define HUM A0
 #define LUX A1
