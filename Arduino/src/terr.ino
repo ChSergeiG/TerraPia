@@ -1,4 +1,4 @@
-#include "Terr.h"
+#include "terr.h"
 
 bool day = false;
 bool bgM = false;
@@ -7,6 +7,7 @@ bool smM = false;
 bool lmp = false;
 int counter = SHORT_PERIOD_LENGTH;
 int hourCounter = LONG_PERIOD_LENGTH;
+int dayCounter = 0;
 int hourLux = 0;
 
 TPin bg_heater		(5, bgM);
@@ -53,12 +54,14 @@ void loop() {
 
   // every 1800 cycles ~ 1 hour
   if (hourCounter >= LONG_PERIOD_LENGTH) {
-    lamp.setState(false);
-    delay(1000);
-    hourLux = analogRead(LUX);
-    lmp = hourLux < 800;
-    day = lmp;
+    dayCounter = dayCounter == 24 ? 1 : dayCounter + 1;
+    //lamp.setState(false);
+    //delay(1000);
+    //hourLux = analogRead(LUX);
+    //lmp = hourLux < 800;
+    //day = lmp;
     // large heater
+    lmp = dayCounter > DAY  && dayCounter <= NIGHT;
     bgM = !lmp;
     lamp.setState(lmp);
     bg_heater.setState(bgM);
@@ -88,11 +91,28 @@ void loop() {
   }
 
   // write values into serial console
-  char buff [98];
-  int i = sprintf(buff, "[%2d/30 %4d/1800] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d\n\0", counter, hourCounter, temperature, humidity, lux, hourLux, bg_heater.getState(), humid.getState(), s_heater.getState(), lamp.getState());
+  char buff [114];
+  int i = sprintf(
+    buff,
+    "[%2d/%2d %4d/%4d %5d] temperature:%-2d humidity:%-3d lux:%-4d hourlux:%-4d [bgM]%d [hum]%d [smM]%d [lux]%d\0",
+    counter,
+    SHORT_PERIOD_LENGTH,
+    hourCounter,
+    LONG_PERIOD_LENGTH,
+    dayCounter,
+    temperature,
+    humidity,
+    lux,
+    hourLux,
+    bg_heater.getState(),
+    humid.getState(),
+    s_heater.getState(),
+    lamp.getState()
+  );
   for (int j = 0; j < i; j++) {
     Serial.print(buff[j]);
   }
+  Serial.println();
 
   // increase counters and delay
   counter++;
